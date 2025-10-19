@@ -1,22 +1,32 @@
+// myApp.js
+
 const express = require('express');
+const helmet = require('helmet');
+
 const app = express();
 
-var helmet = require('helmet');
-
+// 1️⃣ Hide "X-Powered-By" header
 app.use(helmet.hidePoweredBy());
 
-app.use(helmet.frameguard({action: 'deny'}));
+// 2️⃣ Mitigate Clickjacking
+app.use(helmet.frameguard({ action: 'deny' }));
 
+// 3️⃣ Mitigate Cross Site Scripting (XSS) Attacks
+app.use(helmet.xssFilter());
 
-module.exports = app;
-const api = require('./server.js');
+// Serve static files
 app.use(express.static('public'));
-app.disable('strict-transport-security');
-app.use('/_api', api);
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/views/index.html');
+
+// Main route
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/views/index.html');
 });
-let port = process.env.PORT || 5000;
+
+// ✅ Export app for FreeCodeCamp tests
+module.exports = app;
+
+// Start the server (for local use)
+const port = process.env.PORT || 5000;
 app.listen(port, '0.0.0.0', () => {
   console.log(`Your app is listening on port ${port}`);
 });
