@@ -1,29 +1,24 @@
-const express = require("express");
-const helmet = require("helmet");
-
+const express = require('express');
 const app = express();
 
-// Hide "X-Powered-By"
+var helmet = require('helmet');
+
 app.use(helmet.hidePoweredBy());
-
-// Mitigate clickjacking
-app.use(helmet.frameguard({ action: "deny" }));
-
-// Mitigate XSS attacks
+app.use(helmet.frameguard({action: 'deny'}));
 app.use(helmet.xssFilter());
 
-// Serve static files
-app.use(express.static("public"));
 
-// Main route
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/index.html");
-});
+
 
 module.exports = app;
-
-// Start server
-const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () => {
+const api = require('./server.js');
+app.use(express.static('public'));
+app.disable('strict-transport-security');
+app.use('/_api', api);
+app.get("/", function (request, response) {
+  response.sendFile(__dirname + '/views/index.html');
+});
+let port = process.env.PORT || 5000;
+app.listen(port, '0.0.0.0', () => {
   console.log(`Your app is listening on port ${port}`);
 });
