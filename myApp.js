@@ -12,7 +12,7 @@ app.use(helmet.frameguard({ action: "deny" }));
 // 3️⃣ Mitigate Cross Site Scripting (XSS) Attacks
 app.use(helmet.xssFilter());
 
-// Serve static files
+// Serve static files from public folder
 app.use(express.static("public"));
 
 // Main route
@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// ✅ Export app for FreeCodeCamp tests
+// Export app for FreeCodeCamp tests
 module.exports = app;
 
 // Start the server (for local use)
